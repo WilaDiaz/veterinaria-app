@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Nueva Mascota</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>Registrar Mascota</h1>
+
+    <form id="mascotaForm">
+        <input type="text" id="nombre" placeholder="Nombre" required>
+        <input type="text" id="especie" placeholder="Especie" required>
+        <input type="text" id="raza" placeholder="Raza" required>
+        <input type="number" id="edad" placeholder="Edad" required>
+        <input type="text" id="genero" placeholder="Género" required>
+        <input type="text" id="ubicacion" placeholder="Ubicación" required>
+        <input type="text" id="estadoAdopcion" placeholder="Estado de adopción" required>
+        <input type="text" id="fotoUrl" placeholder="URL de foto">
+        <button type="submit">Guardar</button>
+    </form>
+
+    <p id="mensaje"></p>
+
+    <div class="menu">
+        <a href="/admin/mascotas-view">Volver</a>
+    </div>
+</div>
+
+<script>
+const token = localStorage.getItem("jwtToken");
+
+if (!token) {
+    window.location.href = "/login-page";
+}
+
+document.getElementById("mascotaForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const mascota = {
+        nombre: document.getElementById("nombre").value,
+        especie: document.getElementById("especie").value,
+        raza: document.getElementById("raza").value,
+        edad: parseInt(document.getElementById("edad").value),
+        genero: document.getElementById("genero").value,
+        ubicacion: document.getElementById("ubicacion").value,
+        estadoAdopcion: document.getElementById("estadoAdopcion").value,
+        fotoUrl: document.getElementById("fotoUrl").value
+    };
+
+    const response = await fetch("http://localhost:8080/api/mascotas", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": token
+        },
+        body: JSON.stringify(mascota)
+    });
+
+    if (response.ok) {
+        document.getElementById("mensaje").innerText = "Mascota guardada correctamente";
+        window.location.href = "/admin/mascotas-view";
+    } else {
+        document.getElementById("mensaje").innerText = "No se pudo guardar la mascota";
+    }
+});
+</script>
+</body>
+</html>

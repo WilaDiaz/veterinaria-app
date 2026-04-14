@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Catálogo de Mascotas</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+<div class="container">
+    <h1>Catálogo de Mascotas en Adopción</h1>
+
+    <div class="menu">
+        <a href="/catalogo">Ver catálogo</a>
+        <a href="/login-page">Login</a>
+        <a href="/admin/mascotas-view">Administrar mascotas</a>
+    </div>
+
+    <form method="get" action="/catalogo/buscar">
+        <input type="text" name="especie" placeholder="Especie">
+        <input type="text" name="ubicacion" placeholder="Ubicación">
+        <input type="text" name="genero" placeholder="Género">
+        <button type="submit">Buscar</button>
+    </form>
+
+    <table border="1" style="margin-top:20px; width:100%;">
+        <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Especie</th>
+            <th>Raza</th>
+            <th>Edad</th>
+            <th>Género</th>
+            <th>Ubicación</th>
+            <th>Estado</th>
+            <th>Foto</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="m : ${mascotas}">
+            <td th:text="${m.nombre}"></td>
+            <td th:text="${m.especie}"></td>
+            <td th:text="${m.raza}"></td>
+            <td th:text="${m.edad}"></td>
+            <td th:text="${m.genero}"></td>
+            <td th:text="${m.ubicacion}"></td>
+            <td th:text="${m.estadoAdopcion}"></td>
+            <td>
+                <img th:if="${m.fotoUrl != null and !#strings.isEmpty(m.fotoUrl)}"
+                     th:src="${m.fotoUrl}" alt="Foto" width="90">
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Administración de Mascotas</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>Administración de Mascotas</h1>
+
+    <div class="menu">
+        <a href="/catalogo">Catálogo público</a>
+        <a href="/admin/mascotas/nueva">Agregar mascota</a>
+        <a href="#" onclick="cerrarSesion()">Cerrar sesión</a>
+    </div>
+
+    <table border="1" style="margin-top:20px; width:100%;">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Especie</th>
+            <th>Raza</th>
+            <th>Edad</th>
+            <th>Género</th>
+            <th>Ubicación</th>
+            <th>Estado</th>
+        </tr>
+        </thead>
+        <tbody id="tablaMascotas"></tbody>
+    </table>
+</div>
+
+<script>
+const token = localStorage.getItem("jwtToken");
+
+if (!token) {
+    window.location.href = "/login-page";
+}
+
+async function cargarMascotas() {
+    const response = await fetch("http://localhost:8080/api/mascotas");
+    const mascotas = await response.json();
+
+    const tabla = document.getElementById("tablaMascotas");
+    tabla.innerHTML = "";
+
+    mascotas.forEach(m => {
+        tabla.innerHTML += `
+            <tr>
+                <td>${m.id ?? ""}</td>
+                <td>${m.nombre ?? ""}</td>
+                <td>${m.especie ?? ""}</td>
+                <td>${m.raza ?? ""}</td>
+                <td>${m.edad ?? ""}</td>
+                <td>${m.genero ?? ""}</td>
+                <td>${m.ubicacion ?? ""}</td>
+                <td>${m.estadoAdopcion ?? ""}</td>
+            </tr>
+        `;
+    });
+}
+
+function cerrarSesion() {
+    localStorage.removeItem("jwtToken");
+    window.location.href = "/login-page";
+}
+
+cargarMascotas();
+</script>
+</body>
+</html>

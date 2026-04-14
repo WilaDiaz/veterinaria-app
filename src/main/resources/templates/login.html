@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>Iniciar sesión</h1>
+
+    <p>Usuarios de prueba:</p>
+    <ul>
+        <li>admin / admin123</li>
+        <li>vet / vet123</li>
+        <li>recep / recep123</li>
+    </ul>
+
+    <form id="loginForm">
+        <input type="text" id="user" placeholder="Usuario" required>
+        <input type="password" id="encryptedPass" placeholder="Contraseña" required>
+        <button type="submit">Ingresar</button>
+    </form>
+
+    <p id="mensaje"></p>
+
+    <div class="menu">
+        <a href="/catalogo">Volver al catálogo</a>
+    </div>
+</div>
+
+<script>
+document.getElementById("loginForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const user = document.getElementById("user").value;
+    const encryptedPass = document.getElementById("encryptedPass").value;
+
+    const body = new URLSearchParams();
+    body.append("user", user);
+    body.append("encryptedPass", encryptedPass);
+
+    try {
+        const response = await fetch("http://localhost:8080/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: body
+        });
+
+        if (!response.ok) {
+            document.getElementById("mensaje").innerText = "Login incorrecto";
+            return;
+        }
+
+        const token = await response.text();
+        localStorage.setItem("jwtToken", token);
+
+        document.getElementById("mensaje").innerText = "Login exitoso";
+        window.location.href = "/admin/mascotas-view";
+
+    } catch (error) {
+        document.getElementById("mensaje").innerText = "Error al iniciar sesión";
+    }
+});
+</script>
+</body>
+</html>

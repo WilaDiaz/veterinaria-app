@@ -11,7 +11,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonarqube') {
-                    sh 'mvn sonar:sonar -Dsonar.projectKey=veterinaria-app -Dsonar.projectName="Veterinaria App"'
+                    sh 'mvn sonar:sonar -Dsonar.projectKey=Veterinaria-App -Dsonar.projectName="Veterinaria App"'
                 }
             }
         }

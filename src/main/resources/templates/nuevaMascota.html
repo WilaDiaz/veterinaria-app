@@ -49,11 +49,11 @@ document.getElementById("mascotaForm").addEventListener("submit", async function
         fotoUrl: document.getElementById("fotoUrl").value
     };
 
-    const response = await fetch("http://localhost:8080/api/mascotas", {
+    const response = await fetch("http://localhost:8085/api/mascotas", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": token
+            "Authorization": "Bearer " + token
         },
         body: JSON.stringify(mascota)
     });
@@ -68,3 +68,4 @@ document.getElementById("mascotaForm").addEventListener("submit", async function
 </script>
 </body>
 </html>
+

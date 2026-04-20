@@ -1,6 +1,7 @@
-FROM mysql:8.0
+FROM eclipse-temurin:17
 
-ENV MYSQL_ROOT_PASSWORD=root123
-ENV MYSQL_DATABASE=veterinaria
+WORKDIR /app
 
-EXPOSE 3306
+COPY target/demo-0.0.1-SNAPSHOT.jar app.jar
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -1,35 +1,40 @@
 package com.example.demo;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 @Configuration
-@Service
-public class MyUserDetailsService implements UserDetailsService {
+public class MyUserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
+    @Bean
+    public UserDetailsService userDetailsService() {
 
-    @Override
-    public UserDetails loadUserByUsername(String username) {
-        User user = userRepository.findByUsername(username);
+        UserDetails admin = User.withUsername("admin")
+                .password("admin123")
+                .roles("ADMIN")
+                .build();
 
-        if (user == null) {
-            throw new UsernameNotFoundException(username);
-        }
+        UserDetails vet = User.withUsername("vet")
+                .password("vet123")
+                .roles("USER")
+                .build();
 
-        return user;
+        UserDetails recep = User.withUsername("recep")
+                .password("recep123")
+                .roles("USER")
+                .build();
+
+        return new InMemoryUserDetailsManager(admin, vet, recep);
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return NoOpPasswordEncoder.getInstance();
     }
 }

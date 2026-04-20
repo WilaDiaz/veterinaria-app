@@ -17,29 +17,60 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
-            .headers(headers -> headers
-                .contentTypeOptions(contentType -> {})
-                )
-        .authorizeHttpRequests(authz -> authz
-          .requestMatchers(
-                 "/",
-                 "/login-page",
-                "/catalogo",
-                "/catalogo/buscar",
-                "/admin/mascotas-view",
-                "/admin/mascotas/nueva",
-                "/style.css"
-            ).permitAll()
+            .csrf(csrf -> csrf.disable())
 
-        .requestMatchers(HttpMethod.POST, Constants.LOGIN_URL).permitAll()
-        .requestMatchers(HttpMethod.GET, "/api/mascotas").permitAll()
-        .requestMatchers(HttpMethod.GET, "/api/mascotas/buscar").permitAll()
+            .headers(headers -> headers.contentTypeOptions(contentType -> {}))
 
-            .anyRequest().authenticated()
-)
-        .addFilterAfter(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
+            .authorizeHttpRequests(authz -> authz
+                .requestMatchers(
+                    "/",
+                    "/login-page",
+                    "/catalogo",
+                    "/catalogo/buscar",
+                    "/style.css"
+                ).permitAll()
+
+                // Login web para páginas
+                .requestMatchers("/do-login").permitAll()
+
+
+                // Login API para JWT
+                .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
+
+
+                // APIs públicas
+                .requestMatchers(HttpMethod.GET, "/api/mascotas").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/mascotas/buscar").permitAll()
+
+
+                // Páginas privadas
+                .requestMatchers("/admin/**").authenticated()
+
+
+                // APIs privadas
+                .requestMatchers("/api/**").authenticated()
+
+                .anyRequest().authenticated()
+            )
+
+            .formLogin(form -> form
+                .loginPage("/login-page")
+                .loginProcessingUrl("/do-login")
+                .defaultSuccessUrl("/admin/mascotas-view", true)
+                .failureUrl("/login-page?error=true")
+                .permitAll()
+            )
+
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login-page")
+                .permitAll()
+            )
+
+            .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
+
 }

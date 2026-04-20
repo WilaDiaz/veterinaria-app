@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
@@ -16,54 +16,17 @@
         <li>recep / recep123</li>
     </ul>
 
-    <form id="loginForm">
-        <input type="text" id="user" placeholder="Usuario" required>
-        <input type="password" id="encryptedPass" placeholder="Contraseña" required>
+    <form method="post" action="/do-login">
+        <input type="text" name="username" placeholder="Usuario" required>
+        <input type="password" name="password" placeholder="Contraseña" required>
         <button type="submit">Ingresar</button>
     </form>
 
-    <p id="mensaje"></p>
+    <p th:if="${param.error}" id="mensaje">Error al iniciar sesión</p>
 
     <div class="menu">
         <a href="/catalogo">Volver al catálogo</a>
     </div>
 </div>
-
-<script>
-document.getElementById("loginForm").addEventListener("submit", async function(e) {
-    e.preventDefault();
-
-    const user = document.getElementById("user").value;
-    const encryptedPass = document.getElementById("encryptedPass").value;
-
-    const body = new URLSearchParams();
-    body.append("user", user);
-    body.append("encryptedPass", encryptedPass);
-
-    try {
-        const response = await fetch("http://localhost:8080/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: body
-        });
-
-        if (!response.ok) {
-            document.getElementById("mensaje").innerText = "Login incorrecto";
-            return;
-        }
-
-        const token = await response.text();
-        localStorage.setItem("jwtToken", token);
-
-        document.getElementById("mensaje").innerText = "Login exitoso";
-        window.location.href = "/admin/mascotas-view";
-
-    } catch (error) {
-        document.getElementById("mensaje").innerText = "Error al iniciar sesión";
-    }
-});
-</script>
 </body>
 </html>

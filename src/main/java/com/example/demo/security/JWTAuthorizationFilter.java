@@ -26,6 +26,12 @@ import java.util.stream.Collectors;
 @Component
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        return !path.startsWith("/api/");
+    }
+
     private Claims setSigningKey(HttpServletRequest request) {
         String jwtToken = request.getHeader(HEADER_AUTHORIZACION_KEY)
                 .replace(TOKEN_BEARER_PREFIX, "");
@@ -68,11 +74,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
                 if (claims.get("authorities") != null) {
                     setAuthentication(claims);
-                } else {
-                    SecurityContextHolder.clearContext();
                 }
-            } else {
-                SecurityContextHolder.clearContext();
             }
 
             filterChain.doFilter(request, response);

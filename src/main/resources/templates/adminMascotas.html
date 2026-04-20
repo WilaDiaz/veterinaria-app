@@ -40,26 +40,42 @@ if (!token) {
 }
 
 async function cargarMascotas() {
-    const response = await fetch("http://localhost:8080/api/mascotas");
-    const mascotas = await response.json();
+    try {
+        const response = await fetch("http://localhost:8085/api/mascotas", {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        });
 
-    const tabla = document.getElementById("tablaMascotas");
-    tabla.innerHTML = "";
+        if (!response.ok) {
+            document.getElementById("tablaMascotas").innerHTML = "<tr><td colspan='8'>Error al cargar mascotas</td></tr>";
+            return;
+        }
 
-    mascotas.forEach(m => {
-        tabla.innerHTML += `
-            <tr>
-                <td>${m.id ?? ""}</td>
-                <td>${m.nombre ?? ""}</td>
-                <td>${m.especie ?? ""}</td>
-                <td>${m.raza ?? ""}</td>
-                <td>${m.edad ?? ""}</td>
-                <td>${m.genero ?? ""}</td>
-                <td>${m.ubicacion ?? ""}</td>
-                <td>${m.estadoAdopcion ?? ""}</td>
-            </tr>
-        `;
-    });
+        const mascotas = await response.json();
+
+        const tabla = document.getElementById("tablaMascotas");
+        tabla.innerHTML = "";
+
+        mascotas.forEach(m => {
+            tabla.innerHTML += `
+                <tr>
+                    <td>${m.id ?? ""}</td>
+                    <td>${m.nombre ?? ""}</td>
+                    <td>${m.especie ?? ""}</td>
+                    <td>${m.raza ?? ""}</td>
+                    <td>${m.edad ?? ""}</td>
+                    <td>${m.genero ?? ""}</td>
+                    <td>${m.ubicacion ?? ""}</td>
+                    <td>${m.estadoAdopcion ?? ""}</td>
+                </tr>
+            `;
+        });
+
+    } catch (error) {
+        document.getElementById("tablaMascotas").innerHTML = "<tr><td colspan='8'>Error de conexión</td></tr>";
+    }
 }
 
 function cerrarSesion() {
@@ -69,5 +85,3 @@ function cerrarSesion() {
 
 cargarMascotas();
 </script>
-</body>
-</html>

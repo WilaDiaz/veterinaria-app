@@ -18,12 +18,11 @@ public class LoginController {
     private MyUserDetailsService userDetailsService;
 
     @PostMapping("/login")
-    public String login(@RequestParam("user") String username,
-                        @RequestParam("encryptedPass") String encryptedPass) {
-
+    public String login(@RequestParam("username") String username,
+                        @RequestParam("password") String encryptedPass) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-        if (!userDetails.getPassword().equals(encryptedPass)) {
+        if (!userDetails.getPassword().equals(password)) {
             throw new RuntimeException("Invalid login");
         }
 

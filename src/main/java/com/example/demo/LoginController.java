@@ -2,6 +2,8 @@ package com.example.demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,14 +17,18 @@ public class LoginController {
     private JWTAuthtenticationConfig jwtAuthtenticationConfig;
 
     @Autowired
-    private MyUserDetailsService userDetailsService;
+    private UserDetailsService userDetailsService;
 
-    @PostMapping("/login")
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @PostMapping("/api/login")
     public String login(@RequestParam("username") String username,
-                        @RequestParam("password") String encryptedPass) {
+                        @RequestParam("password") String password) {
+
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-        if (!userDetails.getPassword().equals(password)) {
+        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
             throw new RuntimeException("Invalid login");
         }
 
